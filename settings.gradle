@@ -1,0 +1,5 @@
+rootProject.name = 'pico-erp-outsourcing-order'
+include 'api'
+include 'impl'
+include 'test'
+
