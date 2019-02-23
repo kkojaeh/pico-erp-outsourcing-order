@@ -10,11 +10,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import pico.erp.outsourcing.order.OutsourcingOrderPrinter.DraftPrintOptions;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.CancelRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.DetermineRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.GenerateRequest;
-import pico.erp.outsourcing.order.OutsourcingOrderRequests.PrintDraftRequest;
+import pico.erp.outsourcing.order.OutsourcingOrderRequests.PrepareSendRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.ReceiveRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.RejectRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.SendRequest;
@@ -23,7 +22,6 @@ import pico.erp.outsourcing.request.OutsourcingRequestStatusKind;
 import pico.erp.shared.Public;
 import pico.erp.shared.TypeDefinitions;
 import pico.erp.shared.data.Address;
-import pico.erp.shared.data.ContentInputStream;
 import pico.erp.shared.event.EventPublisher;
 import pico.erp.warehouse.location.site.SiteService;
 
@@ -50,9 +48,6 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
   @Lazy
   @Autowired
   private SiteService siteService;
-
-  @Autowired
-  private OutsourcingOrderPrinter printer;
 
   @Override
   public void cancel(CancelRequest request) {
@@ -158,13 +153,12 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
   }
 
   @Override
-  public ContentInputStream printDraft(PrintDraftRequest request) {
+  public void prepareSend(PrepareSendRequest request) {
     val outsourcingOrder = outsourcingOrderRepository.findBy(request.getId())
       .orElseThrow(OutsourcingOrderExceptions.NotFoundException::new);
-    if (!outsourcingOrder.isPrintable()) {
-      throw new OutsourcingOrderExceptions.CannotPrintException();
-    }
-    return printer.printDraft(request.getId(), new DraftPrintOptions());
+    val response = outsourcingOrder.apply(mapper.map(request));
+    outsourcingOrderRepository.update(outsourcingOrder);
+    eventPublisher.publishEvents(response.getEvents());
   }
 
   @Override

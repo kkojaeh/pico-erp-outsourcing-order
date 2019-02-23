@@ -2,7 +2,6 @@ package pico.erp.outsourcing.order;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import pico.erp.shared.data.ContentInputStream;
 
 public interface OutsourcingOrderService {
 
@@ -18,7 +17,7 @@ public interface OutsourcingOrderService {
 
   OutsourcingOrderData get(@Valid @NotNull OutsourcingOrderId id);
 
-  ContentInputStream printDraft(@Valid @NotNull OutsourcingOrderRequests.PrintDraftRequest request);
+  void prepareSend(@Valid @NotNull OutsourcingOrderRequests.PrepareSendRequest request);
 
   void receive(@Valid @NotNull OutsourcingOrderRequests.ReceiveRequest request);
 

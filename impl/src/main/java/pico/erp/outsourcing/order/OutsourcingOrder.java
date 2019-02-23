@@ -3,6 +3,7 @@ package pico.erp.outsourcing.order;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,10 +12,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import pico.erp.company.CompanyData;
+import pico.erp.company.CompanyId;
+import pico.erp.delivery.DeliveryId;
+import pico.erp.document.DocumentId;
 import pico.erp.outsourcing.order.OutsourcingOrderEvents.DeterminedEvent;
 import pico.erp.shared.data.Address;
-import pico.erp.user.UserData;
+import pico.erp.user.UserId;
 
 /**
  * 주문 접수
@@ -36,15 +39,15 @@ public class OutsourcingOrder implements Serializable {
 
   OffsetDateTime dueDate;
 
-  CompanyData supplier;
+  CompanyId supplierId;
 
-  CompanyData receiver;
+  CompanyId receiverId;
 
   Address receiveAddress;
 
   String remark;
 
-  UserData charger;
+  UserId chargerId;
 
   OffsetDateTime determinedDate;
 
@@ -60,6 +63,9 @@ public class OutsourcingOrder implements Serializable {
 
   String rejectedReason;
 
+  DocumentId draftId;
+
+  DeliveryId deliveryId;
 
   public OutsourcingOrder() {
 
@@ -69,12 +75,12 @@ public class OutsourcingOrder implements Serializable {
     OutsourcingOrderMessages.Create.Request request) {
     this.id = request.getId();
     this.dueDate = request.getDueDate();
-    this.supplier = request.getSupplier();
-    this.receiver = request.getReceiver();
+    this.supplierId = request.getSupplierId();
+    this.receiverId = request.getReceiverId();
     this.receiveAddress = request.getReceiveAddress();
     this.remark = request.getRemark();
     this.status = OutsourcingOrderStatusKind.DRAFT;
-    this.charger = request.getCharger();
+    this.chargerId = request.getChargerId();
     this.code = request.getCodeGenerator().generate(this);
     return new OutsourcingOrderMessages.Create.Response(
       Arrays.asList(new OutsourcingOrderEvents.CreatedEvent(this.id))
@@ -87,9 +93,10 @@ public class OutsourcingOrder implements Serializable {
       throw new OutsourcingOrderExceptions.CannotUpdateException();
     }
     this.dueDate = request.getDueDate();
-    this.supplier = request.getSupplier();
-    this.receiver = request.getReceiver();
+    this.supplierId = request.getSupplierId();
+    this.receiverId = request.getReceiverId();
     this.receiveAddress = request.getReceiveAddress();
+    this.chargerId = request.getChargerId();
     this.remark = request.getRemark();
     return new OutsourcingOrderMessages.Update.Response(
       Arrays.asList(new OutsourcingOrderEvents.UpdatedEvent(this.id))
@@ -157,6 +164,19 @@ public class OutsourcingOrder implements Serializable {
     );
   }
 
+  public OutsourcingOrderMessages.PrepareSend.Response apply(
+    OutsourcingOrderMessages.PrepareSend.Request request) {
+    if (!isSendPreparable()) {
+      throw new OutsourcingOrderExceptions.CannotPrepareSendException();
+    }
+    this.draftId = request.getDraftId();
+    this.deliveryId = request.getDeliveryId();
+    this.status = OutsourcingOrderStatusKind.SEND_PREPARED;
+    return new OutsourcingOrderMessages.PrepareSend.Response(
+      Collections.emptyList()
+    );
+  }
+
 
   public boolean isCancelable() {
     return status.isCancelable();
@@ -176,6 +196,10 @@ public class OutsourcingOrder implements Serializable {
 
   public boolean isRejectable() {
     return status.isRejectable();
+  }
+
+  public boolean isSendPreparable() {
+    return status.isSendPreparable();
   }
 
   public boolean isSendable() {

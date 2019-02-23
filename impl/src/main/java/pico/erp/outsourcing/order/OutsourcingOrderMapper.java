@@ -68,9 +68,6 @@ public abstract class OutsourcingOrderMapper {
   }
 
   @Mappings({
-    @Mapping(target = "receiverId", source = "receiver.id"),
-    @Mapping(target = "supplierId", source = "supplier.id"),
-    @Mapping(target = "chargerId", source = "charger.id"),
     @Mapping(target = "createdBy", ignore = true),
     @Mapping(target = "createdDate", ignore = true),
     @Mapping(target = "lastModifiedBy", ignore = true),
@@ -83,11 +80,11 @@ public abstract class OutsourcingOrderMapper {
       .id(entity.getId())
       .code(entity.getCode())
       .dueDate(entity.getDueDate())
-      .supplier(map(entity.getSupplierId()))
-      .receiver(map(entity.getReceiverId()))
+      .supplierId(entity.getSupplierId())
+      .receiverId(entity.getReceiverId())
       .receiveAddress(entity.getReceiveAddress())
       .remark(entity.getRemark())
-      .charger(map(entity.getChargerId()))
+      .chargerId(entity.getChargerId())
       .determinedDate(entity.getDeterminedDate())
       .receivedDate(entity.getReceivedDate())
       .sentDate(entity.getSentDate())
@@ -95,6 +92,8 @@ public abstract class OutsourcingOrderMapper {
       .canceledDate(entity.getCanceledDate())
       .status(entity.getStatus())
       .rejectedReason(entity.getRejectedReason())
+      .draftId(entity.getDraftId())
+      .deliveryId(entity.getDeliveryId())
       .build();
   }
 
@@ -136,27 +135,14 @@ public abstract class OutsourcingOrderMapper {
       .orElse(null);
   }
 
-  @Mappings({
-    @Mapping(target = "supplierId", source = "supplier.id"),
-    @Mapping(target = "receiverId", source = "receiver.id"),
-    @Mapping(target = "chargerId", source = "charger.id")
-  })
   public abstract OutsourcingOrderData map(OutsourcingOrder outsourcingOrder);
 
   @Mappings({
-    @Mapping(target = "supplier", source = "supplierId"),
-    @Mapping(target = "receiver", source = "receiverId"),
-    @Mapping(target = "charger", source = "chargerId"),
     @Mapping(target = "codeGenerator", expression = "java(outsourcingOrderCodeGenerator)")
   })
   public abstract OutsourcingOrderMessages.Create.Request map(
     OutsourcingOrderRequests.CreateRequest request);
 
-  @Mappings({
-    @Mapping(target = "supplier", source = "supplierId"),
-    @Mapping(target = "receiver", source = "receiverId"),
-    @Mapping(target = "charger", source = "chargerId")
-  })
   public abstract OutsourcingOrderMessages.Update.Request map(
     OutsourcingOrderRequests.UpdateRequest request);
 
@@ -174,6 +160,9 @@ public abstract class OutsourcingOrderMapper {
 
   public abstract OutsourcingOrderMessages.Reject.Request map(
     OutsourcingOrderRequests.RejectRequest request);
+
+  public abstract OutsourcingOrderMessages.PrepareSend.Request map(
+    OutsourcingOrderRequests.PrepareSendRequest request);
 
 
   public abstract void pass(OutsourcingOrderEntity from, @MappingTarget OutsourcingOrderEntity to);
