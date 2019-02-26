@@ -107,7 +107,7 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
       .map(item -> {
         val map = new HashMap<String, Object>();
         val p = processService.get(item.getProcessId());
-        map.put("order", item);
+        map.put("data", item);
         map.put("process", p);
         map.put("properties", p.getDisplayProperties().entrySet());
         map.put("item", itemService.get(item.getItemId()));
@@ -121,8 +121,9 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
     List<Map<String, Object>> materials = outsourcingOrderMaterialService.getAll(key).stream()
       .map(item -> {
         val map = new HashMap<String, Object>();
-        map.put("order", item);
+        map.put("data", item);
         map.put("item", itemService.get(item.getItemId()));
+        map.put("supplier", companyService.get(item.getSupplierId()));
         map.put("unitLabel", messageSource
           .getMessage(item.getUnit().getNameCode(), null, item.getUnit().getDefault(),
             locale));
