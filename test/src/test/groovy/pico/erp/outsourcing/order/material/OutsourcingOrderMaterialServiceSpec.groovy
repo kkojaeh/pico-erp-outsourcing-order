@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import pico.erp.company.CompanyId
 import pico.erp.item.ItemId
 import pico.erp.item.spec.ItemSpecCode
 import pico.erp.outsourcing.order.OutsourcingOrderId
@@ -41,6 +42,8 @@ class OutsourcingOrderMaterialServiceSpec extends Specification {
   def itemSpecCode = ItemSpecCode.NOT_APPLICABLE
 
   def unit = UnitKind.EA
+
+  def supplierId = CompanyId.from("SUPP2")
 
   def setup() {
 
@@ -97,7 +100,8 @@ class OutsourcingOrderMaterialServiceSpec extends Specification {
         itemSpecCode: itemSpecCode,
         quantity: 100,
         unit: unit,
-        remark: "품목 비고"
+        remark: "품목 비고",
+        supplierId: supplierId
       )
     )
   }
@@ -111,7 +115,8 @@ class OutsourcingOrderMaterialServiceSpec extends Specification {
         itemSpecCode: itemSpecCode,
         quantity: 100,
         unit: unit,
-        remark: "품목 비고"
+        remark: "품목 비고",
+        supplierId: supplierId
       )
     )
   }
@@ -122,7 +127,8 @@ class OutsourcingOrderMaterialServiceSpec extends Specification {
         id: id,
         quantity: 200,
         unit: unit,
-        remark: "품목 비고2"
+        remark: "품목 비고2",
+        supplierId: supplierId
       )
     )
   }
