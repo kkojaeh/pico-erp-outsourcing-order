@@ -1,9 +1,15 @@
 package pico.erp.outsourcing.order;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import pico.erp.company.CompanyService;
 import pico.erp.company.address.CompanyAddressData;
@@ -11,8 +17,10 @@ import pico.erp.company.address.CompanyAddressService;
 import pico.erp.document.context.DocumentContextFactory;
 import pico.erp.document.subject.DocumentSubjectDefinition;
 import pico.erp.document.subject.DocumentSubjectId;
+import pico.erp.item.ItemService;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemService;
 import pico.erp.outsourcing.order.material.OutsourcingOrderMaterialService;
+import pico.erp.process.ProcessService;
 import pico.erp.shared.Public;
 import pico.erp.user.UserService;
 
@@ -57,14 +65,28 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
   @Autowired
   private UserService userService;
 
+  @Lazy
+  @Autowired
+  private ItemService itemService;
+
+  @Lazy
+  @Autowired
+  private MessageSource messageSource;
+
+  @Lazy
+  @Autowired
+  private ProcessService processService;
+
   @Override
   public Object getContext(OutsourcingOrderId key) {
+    val locale = LocaleContextHolder.getLocale();
     val context = contextFactory.factory();
     val data = context.getData();
     val order = outsourcingOrderService.get(key);
-    val items = outsourcingOrderItemService.getAll(key);
-    val materials = outsourcingOrderMaterialService.getAll(key);
+
     val owner = companyService.getOwner();
+    val supplier = companyService.get(order.getSupplierId());
+    val receiver = companyService.get(order.getReceiverId());
     val ownerAddress = companyAddressService.getAll(owner.getId()).stream()
       .filter(c -> c.isRepresented())
       .findFirst()
@@ -81,8 +103,36 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
       .orElse(new CompanyAddressData());
 
     val charger = userService.get(order.getChargerId());
+    List<Map<String, Object>> items = outsourcingOrderItemService.getAll(key).stream()
+      .map(item -> {
+        val map = new HashMap<String, Object>();
+        val p = processService.get(item.getProcessId());
+        map.put("order", item);
+        map.put("process", p);
+        map.put("properties", p.getDisplayProperties().entrySet());
+        map.put("item", itemService.get(item.getItemId()));
+        map.put("unitLabel", messageSource
+          .getMessage(item.getUnit().getNameCode(), null, item.getUnit().getDefault(),
+            locale));
+        return map;
+      })
+      .collect(Collectors.toList());
+
+    List<Map<String, Object>> materials = outsourcingOrderMaterialService.getAll(key).stream()
+      .map(item -> {
+        val map = new HashMap<String, Object>();
+        map.put("order", item);
+        map.put("item", itemService.get(item.getItemId()));
+        map.put("unitLabel", messageSource
+          .getMessage(item.getUnit().getNameCode(), null, item.getUnit().getDefault(),
+            locale));
+        return map;
+      })
+      .collect(Collectors.toList());
 
     data.put("owner", owner);
+    data.put("supplier", supplier);
+    data.put("receiver", receiver);
     data.put("ownerAddress", ownerAddress);
     data.put("receiverAddress", receiverAddress);
     data.put("supplierAddress", supplierAddress);
