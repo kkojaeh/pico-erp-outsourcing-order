@@ -1,5 +1,6 @@
 package pico.erp.outsourcing.order;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import pico.erp.company.CompanyService;
 import pico.erp.delivery.subject.DeliverySubjectDefinition;
 import pico.erp.delivery.subject.DeliverySubjectId;
+import pico.erp.document.DocumentService;
 import pico.erp.shared.Public;
 import pico.erp.shared.data.ContentInputStream;
 import pico.erp.user.UserService;
@@ -39,9 +41,14 @@ public class OutsourcingOrderDraftDeliverySubjectDefinition implements
   @Autowired
   private UserService userService;
 
+  @Lazy
+  @Autowired
+  private DocumentService documentService;
+
   @Override
   public List<ContentInputStream> getAttachments(OutsourcingOrderId key) {
-    return null;
+    val order = outsourcingOrderService.get(key);
+    return Arrays.asList(documentService.load(order.getDraftId()));
   }
 
   @Override

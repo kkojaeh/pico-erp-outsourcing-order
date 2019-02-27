@@ -146,6 +146,10 @@ public abstract class OutsourcingOrderMapper {
   public abstract OutsourcingOrderMessages.Update.Request map(
     OutsourcingOrderRequests.UpdateRequest request);
 
+  @Mappings({
+    @Mapping(target = "draftId", ignore = true),
+    @Mapping(target = "deliveryId", ignore = true)
+  })
   public abstract OutsourcingOrderMessages.Determine.Request map(
     DetermineRequest request);
 
@@ -160,10 +164,6 @@ public abstract class OutsourcingOrderMapper {
 
   public abstract OutsourcingOrderMessages.Reject.Request map(
     OutsourcingOrderRequests.RejectRequest request);
-
-  public abstract OutsourcingOrderMessages.PrepareSend.Request map(
-    OutsourcingOrderRequests.PrepareSendRequest request);
-
 
   public abstract void pass(OutsourcingOrderEntity from, @MappingTarget OutsourcingOrderEntity to);
 

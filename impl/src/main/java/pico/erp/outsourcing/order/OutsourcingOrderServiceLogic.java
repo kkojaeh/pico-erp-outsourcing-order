@@ -1,6 +1,8 @@
 package pico.erp.outsourcing.order;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,10 +12,16 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import pico.erp.company.CompanyService;
+import pico.erp.delivery.DeliveryId;
+import pico.erp.delivery.DeliveryRequests;
+import pico.erp.delivery.DeliveryService;
+import pico.erp.document.DocumentId;
+import pico.erp.document.DocumentRequests;
+import pico.erp.document.DocumentService;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.CancelRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.DetermineRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.GenerateRequest;
-import pico.erp.outsourcing.order.OutsourcingOrderRequests.PrepareSendRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.ReceiveRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.RejectRequest;
 import pico.erp.outsourcing.order.OutsourcingOrderRequests.SendRequest;
@@ -49,6 +57,18 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
   @Autowired
   private SiteService siteService;
 
+  @Lazy
+  @Autowired
+  private DocumentService documentService;
+
+  @Lazy
+  @Autowired
+  private DeliveryService deliveryService;
+
+  @Lazy
+  @Autowired
+  private CompanyService companyService;
+
   @Override
   public void cancel(CancelRequest request) {
     val outsourcingOrder = outsourcingOrderRepository.findBy(request.getId())
@@ -74,9 +94,42 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
   public void determine(DetermineRequest request) {
     val outsourcingOrder = outsourcingOrderRepository.findBy(request.getId())
       .orElseThrow(OutsourcingOrderExceptions.NotFoundException::new);
+    val message = mapper.map(request);
+    val previousDraftId = outsourcingOrder.getDraftId();
+    val draftId = DocumentId.generate();
+    val deliveryId = DeliveryId.generate();
+    message.setDeliveryId(deliveryId);
+    message.setDraftId(draftId);
     val response = outsourcingOrder.apply(mapper.map(request));
     outsourcingOrderRepository.update(outsourcingOrder);
     eventPublisher.publishEvents(response.getEvents());
+    if (previousDraftId != null) {
+      documentService.delete(
+        new DocumentRequests.DeleteRequest(previousDraftId)
+      );
+    }
+    val supplier = companyService.get(outsourcingOrder.getSupplierId());
+    val name = String.format("OO-%s-%s-%s",
+      outsourcingOrder.getCode().getValue(),
+      supplier.getName(),
+      DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now())
+    );
+    documentService.create(
+      DocumentRequests.CreateRequest.builder()
+        .id(draftId)
+        .subjectId(OutsourcingOrderDraftDocumentSubjectDefinition.ID)
+        .name(name)
+        .key(outsourcingOrder.getId())
+        .creatorId(outsourcingOrder.getChargerId())
+        .build()
+    );
+    deliveryService.create(
+      DeliveryRequests.CreateRequest.builder()
+        .id(deliveryId)
+        .subjectId(OutsourcingOrderDraftDeliverySubjectDefinition.ID)
+        .key(outsourcingOrder.getId())
+        .build()
+    );
   }
 
   @Override
@@ -150,15 +203,6 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
     return outsourcingOrderRepository.findBy(id)
       .map(mapper::map)
       .orElseThrow(OutsourcingOrderExceptions.NotFoundException::new);
-  }
-
-  @Override
-  public void prepareSend(PrepareSendRequest request) {
-    val outsourcingOrder = outsourcingOrderRepository.findBy(request.getId())
-      .orElseThrow(OutsourcingOrderExceptions.NotFoundException::new);
-    val response = outsourcingOrder.apply(mapper.map(request));
-    outsourcingOrderRepository.update(outsourcingOrder);
-    eventPublisher.publishEvents(response.getEvents());
   }
 
   @Override

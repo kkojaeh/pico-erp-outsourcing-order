@@ -17,8 +17,6 @@ public interface OutsourcingOrderService {
 
   OutsourcingOrderData get(@Valid @NotNull OutsourcingOrderId id);
 
-  void prepareSend(@Valid @NotNull OutsourcingOrderRequests.PrepareSendRequest request);
-
   void receive(@Valid @NotNull OutsourcingOrderRequests.ReceiveRequest request);
 
   void reject(@Valid @NotNull OutsourcingOrderRequests.RejectRequest request);

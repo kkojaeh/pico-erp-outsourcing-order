@@ -244,7 +244,7 @@ class OutsourcingOrderServiceSpec extends Specification {
     determineOrder()
     def order = orderService.get(id)
     then:
-    order.status == OutsourcingOrderStatusKind.SEND_PREPARED
+    order.status == OutsourcingOrderStatusKind.DETERMINED
   }
 
   def "확정 - 확정 후 확정"() {

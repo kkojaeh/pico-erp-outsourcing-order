@@ -99,6 +99,10 @@ public interface OutsourcingOrderMessages {
     @Data
     class Request {
 
+      DocumentId draftId;
+
+      DeliveryId deliveryId;
+
     }
 
     @Value
@@ -181,9 +185,7 @@ public interface OutsourcingOrderMessages {
     @Data
     class Request {
 
-      DocumentId draftId;
 
-      DeliveryId deliveryId;
 
     }
 

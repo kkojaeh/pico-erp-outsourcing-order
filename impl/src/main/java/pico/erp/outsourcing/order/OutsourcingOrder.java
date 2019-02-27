@@ -3,7 +3,6 @@ package pico.erp.outsourcing.order;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -108,6 +107,8 @@ public class OutsourcingOrder implements Serializable {
     if (!isDeterminable()) {
       throw new OutsourcingOrderExceptions.CannotDetermineException();
     }
+    this.draftId = request.getDraftId();
+    this.deliveryId = request.getDeliveryId();
     this.status = OutsourcingOrderStatusKind.DETERMINED;
     this.determinedDate = OffsetDateTime.now();
     return new OutsourcingOrderMessages.Determine.Response(
@@ -164,20 +165,6 @@ public class OutsourcingOrder implements Serializable {
     );
   }
 
-  public OutsourcingOrderMessages.PrepareSend.Response apply(
-    OutsourcingOrderMessages.PrepareSend.Request request) {
-    if (!isSendPreparable()) {
-      throw new OutsourcingOrderExceptions.CannotPrepareSendException();
-    }
-    this.draftId = request.getDraftId();
-    this.deliveryId = request.getDeliveryId();
-    this.status = OutsourcingOrderStatusKind.SEND_PREPARED;
-    return new OutsourcingOrderMessages.PrepareSend.Response(
-      Collections.emptyList()
-    );
-  }
-
-
   public boolean isCancelable() {
     return status.isCancelable();
   }
@@ -196,10 +183,6 @@ public class OutsourcingOrder implements Serializable {
 
   public boolean isRejectable() {
     return status.isRejectable();
-  }
-
-  public boolean isSendPreparable() {
-    return status.isSendPreparable();
   }
 
   public boolean isSendable() {
