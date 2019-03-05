@@ -134,6 +134,7 @@ public class OutsourcingOrderItem implements Serializable {
     }
     return new OutsourcingOrderItemMessages.Receive.Response(
       Arrays.asList(new OutsourcingOrderItemEvents.ReceivedEvent(this.id,
+        request.getQuantity(),
         this.status == OutsourcingOrderItemStatusKind.RECEIVED))
     );
   }

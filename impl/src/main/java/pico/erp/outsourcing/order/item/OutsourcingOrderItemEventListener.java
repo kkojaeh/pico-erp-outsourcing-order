@@ -1,5 +1,6 @@
 package pico.erp.outsourcing.order.item;
 
+import java.math.BigDecimal;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -105,12 +106,18 @@ public class OutsourcingOrderItemEventListener {
 
   @EventListener
   @JmsListener(destination = LISTENER_NAME + "."
-    + OutsourcingOrderItemEvents.RejectedEvent.CHANNEL)
+    + OutsourcingOrderItemEvents.ReceivedEvent.CHANNEL)
   public void onOrderItemReceived(OutsourcingOrderItemEvents.ReceivedEvent event) {
-    if (event.isCompleted()) {
-      val item = outsourcingOrderItemService.get(event.getId());
-      val requestId = item.getRequestId();
-      if (requestId != null) {
+    val item = outsourcingOrderItemService.get(event.getId());
+    val requestId = item.getRequestId();
+    if (requestId != null) {
+      outsourcingRequestService.progress(
+        OutsourcingRequestRequests.ProgressRequest.builder()
+          .id(requestId)
+          .progressedQuantity(event.getQuantity())
+          .build()
+      );
+      if (event.isCompleted()) {
         outsourcingRequestService.complete(
           OutsourcingRequestRequests.CompleteRequest.builder()
             .id(requestId)
@@ -145,6 +152,7 @@ public class OutsourcingOrderItemEventListener {
       outsourcingRequestService.progress(
         OutsourcingRequestRequests.ProgressRequest.builder()
           .id(requestId)
+          .progressedQuantity(BigDecimal.ZERO)
           .build()
       );
     }

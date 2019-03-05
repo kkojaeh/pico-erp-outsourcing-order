@@ -1,5 +1,6 @@
 package pico.erp.outsourcing.order.item;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,6 +62,8 @@ public interface OutsourcingOrderItemEvents {
     public final static String CHANNEL = "event.outsourcing-order-item.received";
 
     private OutsourcingOrderItemId id;
+
+    private BigDecimal quantity;
 
     private boolean completed;
 
