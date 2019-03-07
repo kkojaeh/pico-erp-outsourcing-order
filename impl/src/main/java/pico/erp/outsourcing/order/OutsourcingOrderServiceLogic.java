@@ -100,7 +100,7 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
     val deliveryId = DeliveryId.generate();
     message.setDeliveryId(deliveryId);
     message.setDraftId(draftId);
-    val response = outsourcingOrder.apply(mapper.map(request));
+    val response = outsourcingOrder.apply(message);
     outsourcingOrderRepository.update(outsourcingOrder);
     eventPublisher.publishEvents(response.getEvents());
     if (previousDraftId != null) {
