@@ -87,8 +87,6 @@ flyway:
   enabled: false
 
 outsourcing-order:
-  print:
-    draft-template: classpath:outsourcing-order/template/draft.xlsx
   charger-group:
-    id: po-charger
-    name: 발주 담당자
+    id: oo-charger
+    name: 외주 발주 담당자
