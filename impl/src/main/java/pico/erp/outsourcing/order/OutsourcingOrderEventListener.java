@@ -12,7 +12,6 @@ import pico.erp.document.DocumentService;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemEvents;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemService;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemStatusKind;
-import pico.erp.outsourcing.request.OutsourcingRequestRequests;
 import pico.erp.outsourcing.request.OutsourcingRequestService;
 
 @SuppressWarnings("unused")
@@ -70,15 +69,6 @@ public class OutsourcingOrderEventListener {
     if (event.isCompleted()) {
       val orderItem = outsourcingOrderItemService.get(event.getId());
       val orderId = orderItem.getOrderId();
-
-      val requestId = orderItem.getRequestId();
-      if (requestId != null) {
-        outsourcingRequestService.complete(
-          OutsourcingRequestRequests.CompleteRequest.builder()
-            .id(requestId)
-            .build()
-        );
-      }
 
       val received = outsourcingOrderItemService.getAll(orderId).stream()
         .allMatch(item -> item.getStatus() == OutsourcingOrderItemStatusKind.RECEIVED);
