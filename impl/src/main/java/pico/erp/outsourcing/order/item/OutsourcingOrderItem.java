@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import lombok.val;
 import pico.erp.item.ItemId;
 import pico.erp.item.spec.ItemSpecCode;
 import pico.erp.outsourcing.order.OutsourcingOrder;
@@ -126,8 +127,9 @@ public class OutsourcingOrderItem implements Serializable {
     if (!this.isReceivable()) {
       throw new OutsourcingOrderItemExceptions.CannotReceiveException();
     }
+    val totalQuantity = this.quantity.add(this.spareQuantity);
     this.receivedQuantity = this.receivedQuantity.add(request.getQuantity());
-    if (this.receivedQuantity.compareTo(this.quantity) > -1) {
+    if (this.receivedQuantity.compareTo(totalQuantity) > -1) {
       this.status = OutsourcingOrderItemStatusKind.RECEIVED;
     } else {
       this.status = OutsourcingOrderItemStatusKind.IN_RECEIVING;
