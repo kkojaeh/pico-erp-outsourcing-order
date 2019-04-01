@@ -1,30 +1,30 @@
 package pico.erp.config;
 
 import java.math.BigDecimal;
+import kkojaeh.spring.boot.component.Give;
+import kkojaeh.spring.boot.component.Take;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
-import pico.erp.item.ItemService;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemUnitCostEstimator;
 import pico.erp.process.ProcessService;
-import pico.erp.shared.Public;
 
 @Configuration
 public class OutsourcingOrderConfiguration {
 
-  @Public
-  @Component
+
+  @Give
+  @Bean
+  @ConditionalOnMissingBean(OutsourcingOrderItemUnitCostEstimator.class)
+  public OutsourcingOrderItemUnitCostEstimator defaultOutsourcingOrderItemUnitCostEstimator() {
+    return new DefaultOutsourcingOrderItemUnitCostEstimator();
+  }
+
   public static class DefaultOutsourcingOrderItemUnitCostEstimator implements
     OutsourcingOrderItemUnitCostEstimator {
 
-    @Lazy
-    @Autowired
-    ItemService itemService;
-
-    @Lazy
-    @Autowired
+    @Take
     ProcessService processService;
 
     @Override

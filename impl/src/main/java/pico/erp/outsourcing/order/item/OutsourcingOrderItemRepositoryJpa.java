@@ -46,12 +46,12 @@ public class OutsourcingOrderItemRepositoryJpa implements OutsourcingOrderItemRe
 
   @Override
   public void deleteBy(OutsourcingOrderItemId id) {
-    repository.delete(id);
+    repository.deleteById(id);
   }
 
   @Override
   public boolean exists(OutsourcingOrderItemId id) {
-    return repository.exists(id);
+    return repository.existsById(id);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class OutsourcingOrderItemRepositoryJpa implements OutsourcingOrderItemRe
 
   @Override
   public Optional<OutsourcingOrderItem> findBy(OutsourcingOrderItemId id) {
-    return Optional.ofNullable(repository.findOne(id))
+    return repository.findById(id)
       .map(mapper::jpa);
   }
 
@@ -79,7 +79,7 @@ public class OutsourcingOrderItemRepositoryJpa implements OutsourcingOrderItemRe
 
   @Override
   public void update(OutsourcingOrderItem planItem) {
-    val entity = repository.findOne(planItem.getId());
+    val entity = repository.findById(planItem.getId()).get();
     mapper.pass(mapper.jpa(planItem), entity);
     repository.save(entity);
   }

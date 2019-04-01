@@ -3,6 +3,7 @@ package pico.erp.outsourcing.order.item;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kkojaeh.spring.boot.component.Give;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -15,12 +16,11 @@ import pico.erp.outsourcing.order.OutsourcingOrderId;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemRequests.GenerateRequest;
 import pico.erp.outsourcing.request.OutsourcingRequestId;
 import pico.erp.outsourcing.request.OutsourcingRequestService;
-import pico.erp.shared.Public;
 import pico.erp.shared.event.EventPublisher;
 
 @SuppressWarnings("Duplicates")
 @Service
-@Public
+@Give
 @Transactional
 @Validated
 public class OutsourcingOrderItemServiceLogic implements OutsourcingOrderItemService {

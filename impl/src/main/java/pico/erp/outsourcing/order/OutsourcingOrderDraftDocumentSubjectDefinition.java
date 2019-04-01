@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kkojaeh.spring.boot.component.Give;
+import kkojaeh.spring.boot.component.Take;
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,9 @@ import pico.erp.item.ItemService;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemService;
 import pico.erp.outsourcing.order.material.OutsourcingOrderMaterialService;
 import pico.erp.process.ProcessService;
-import pico.erp.shared.Public;
 import pico.erp.user.UserService;
 
-@Public
+@Give
 @Component
 public class OutsourcingOrderDraftDocumentSubjectDefinition implements
   DocumentSubjectDefinition<OutsourcingOrderId, Object> {
@@ -37,16 +38,13 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
   @Getter
   String name = "[outsourcing-order] 외주 발주서";
 
-  @Lazy
-  @Autowired
+  @Take
   private DocumentContextFactory contextFactory;
 
-  @Lazy
-  @Autowired
+  @Take
   private CompanyService companyService;
 
-  @Lazy
-  @Autowired
+  @Take
   private CompanyAddressService companyAddressService;
 
   @Lazy
@@ -61,20 +59,17 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
   @Autowired
   private OutsourcingOrderMaterialService outsourcingOrderMaterialService;
 
-  @Lazy
-  @Autowired
+  @Take
   private UserService userService;
 
-  @Lazy
-  @Autowired
+  @Take
   private ItemService itemService;
 
   @Lazy
   @Autowired
   private MessageSource messageSource;
 
-  @Lazy
-  @Autowired
+  @Take
   private ProcessService processService;
 
   @Override

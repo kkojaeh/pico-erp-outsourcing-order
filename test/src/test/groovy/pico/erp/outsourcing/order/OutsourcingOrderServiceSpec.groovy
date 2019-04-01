@@ -1,26 +1,38 @@
 package pico.erp.outsourcing.order
 
+import kkojaeh.spring.boot.component.SpringBootTestComponent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import pico.erp.bom.BomApplication
+import pico.erp.company.CompanyApplication
 import pico.erp.company.CompanyId
-import pico.erp.shared.IntegrationConfiguration
+import pico.erp.delivery.DeliveryApplication
+import pico.erp.document.DocumentApplication
+import pico.erp.item.ItemApplication
+import pico.erp.outsourcing.request.OutsourcingRequestApplication
+import pico.erp.process.ProcessApplication
+import pico.erp.project.ProjectApplication
+import pico.erp.shared.TestParentApplication
 import pico.erp.shared.data.Address
+import pico.erp.user.UserApplication
 import pico.erp.user.UserId
+import pico.erp.warehouse.WarehouseApplication
 import spock.lang.Specification
 
-import java.time.OffsetDateTime
+import java.time.LocalDateTime
 
-@SpringBootTest(classes = [IntegrationConfiguration])
+@SpringBootTest(classes = [OutsourcingOrderApplication, TestConfig])
+@SpringBootTestComponent(parent = TestParentApplication, siblings = [
+  UserApplication, ItemApplication, ProjectApplication, ProcessApplication, CompanyApplication,
+  DocumentApplication, DeliveryApplication, WarehouseApplication, OutsourcingRequestApplication,
+  BomApplication
+])
 @Transactional
 @Rollback
 @ActiveProfiles("test")
-@Configuration
-@ComponentScan("pico.erp.config")
 class OutsourcingOrderServiceSpec extends Specification {
 
   @Autowired
@@ -30,7 +42,7 @@ class OutsourcingOrderServiceSpec extends Specification {
 
   def unknownId = OutsourcingOrderId.from("unknown")
 
-  def dueDate = OffsetDateTime.now().plusDays(7)
+  def dueDate = LocalDateTime.now().plusDays(7)
 
   def remark = "요청 비고"
 
@@ -44,7 +56,7 @@ class OutsourcingOrderServiceSpec extends Specification {
 
   def supplierId2 = CompanyId.from("SUPP2")
 
-  def dueDate2 = OffsetDateTime.now().plusDays(8)
+  def dueDate2 = LocalDateTime.now().plusDays(8)
 
   def remark2 = "요청 비고2"
 
