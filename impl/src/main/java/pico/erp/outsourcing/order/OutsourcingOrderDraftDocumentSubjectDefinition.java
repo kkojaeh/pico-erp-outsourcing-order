@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import kkojaeh.spring.boot.component.ComponentAutowired;
+import kkojaeh.spring.boot.component.ComponentBean;
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import pico.erp.company.CompanyService;
@@ -21,10 +22,9 @@ import pico.erp.item.ItemService;
 import pico.erp.outsourcing.order.item.OutsourcingOrderItemService;
 import pico.erp.outsourcing.order.material.OutsourcingOrderMaterialService;
 import pico.erp.process.ProcessService;
-import pico.erp.shared.Public;
 import pico.erp.user.UserService;
 
-@Public
+@ComponentBean(host = false)
 @Component
 public class OutsourcingOrderDraftDocumentSubjectDefinition implements
   DocumentSubjectDefinition<OutsourcingOrderId, Object> {
@@ -37,44 +37,34 @@ public class OutsourcingOrderDraftDocumentSubjectDefinition implements
   @Getter
   String name = "[outsourcing-order] 외주 발주서";
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private DocumentContextFactory contextFactory;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private CompanyService companyService;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private CompanyAddressService companyAddressService;
 
-  @Lazy
   @Autowired
   private OutsourcingOrderService outsourcingOrderService;
 
-  @Lazy
   @Autowired
   private OutsourcingOrderItemService outsourcingOrderItemService;
 
-  @Lazy
   @Autowired
   private OutsourcingOrderMaterialService outsourcingOrderMaterialService;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private UserService userService;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private ItemService itemService;
 
-  @Lazy
   @Autowired
   private MessageSource messageSource;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private ProcessService processService;
 
   @Override

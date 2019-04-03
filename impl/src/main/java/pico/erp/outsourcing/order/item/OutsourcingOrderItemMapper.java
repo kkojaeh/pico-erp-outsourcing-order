@@ -1,6 +1,7 @@
 package pico.erp.outsourcing.order.item;
 
 import java.util.Optional;
+import kkojaeh.spring.boot.component.ComponentAutowired;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -32,20 +33,16 @@ public abstract class OutsourcingOrderItemMapper {
   @Autowired
   protected AuditorAware<Auditor> auditorAware;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   protected ItemService itemService;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   protected ItemLotService itemLotService;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   protected ItemSpecService itemSpecService;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired(required = false)
   protected OutsourcingOrderItemUnitCostEstimator unitCostEstimator;
 
   @Lazy
@@ -55,8 +52,7 @@ public abstract class OutsourcingOrderItemMapper {
   @Autowired
   private OutsourcingOrderMapper orderMapper;
 
-  @Lazy
-  @Autowired
+  @ComponentAutowired
   private ProjectService projectService;
 
   protected OutsourcingOrderItemId id(OutsourcingOrderItem outsourcingOrderItem) {

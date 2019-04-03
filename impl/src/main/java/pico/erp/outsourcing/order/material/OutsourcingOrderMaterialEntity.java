@@ -3,7 +3,7 @@ package pico.erp.outsourcing.order.material;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -91,7 +91,7 @@ public class OutsourcingOrderMaterialEntity implements Serializable {
 
   @CreatedDate
   @Column(updatable = false)
-  OffsetDateTime createdDate;
+  LocalDateTime createdDate;
 
   @Embedded
   @AttributeOverrides({
@@ -102,13 +102,13 @@ public class OutsourcingOrderMaterialEntity implements Serializable {
   Auditor lastModifiedBy;
 
   @LastModifiedDate
-  OffsetDateTime lastModifiedDate;
+  LocalDateTime lastModifiedDate;
 
   @AttributeOverrides({
     @AttributeOverride(name = "value", column = @Column(name = "SUPPLIER_ID", length = TypeDefinitions.ID_LENGTH))
   })
   CompanyId supplierId;
 
-  OffsetDateTime estimatedSupplyDate;
+  LocalDateTime estimatedSupplyDate;
 
 }

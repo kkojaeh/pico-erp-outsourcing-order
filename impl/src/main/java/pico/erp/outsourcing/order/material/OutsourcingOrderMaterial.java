@@ -2,7 +2,7 @@ package pico.erp.outsourcing.order.material;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import javax.persistence.Id;
 import lombok.AccessLevel;
@@ -48,7 +48,7 @@ public class OutsourcingOrderMaterial implements Serializable {
 
   CompanyId supplierId;
 
-  OffsetDateTime estimatedSupplyDate;
+  LocalDateTime estimatedSupplyDate;
 
   public OutsourcingOrderMaterial() {
 
