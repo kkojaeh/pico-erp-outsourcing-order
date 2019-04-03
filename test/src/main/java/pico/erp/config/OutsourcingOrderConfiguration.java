@@ -1,8 +1,8 @@
 package pico.erp.config;
 
 import java.math.BigDecimal;
-import kkojaeh.spring.boot.component.Give;
-import kkojaeh.spring.boot.component.Take;
+import kkojaeh.spring.boot.component.ComponentAutowired;
+import kkojaeh.spring.boot.component.ComponentBean;
 import lombok.val;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import pico.erp.process.ProcessService;
 public class OutsourcingOrderConfiguration {
 
 
-  @Give
+  @ComponentBean(host = false)
   @Bean
   @ConditionalOnMissingBean(OutsourcingOrderItemUnitCostEstimator.class)
   public OutsourcingOrderItemUnitCostEstimator defaultOutsourcingOrderItemUnitCostEstimator() {
@@ -24,7 +24,7 @@ public class OutsourcingOrderConfiguration {
   public static class DefaultOutsourcingOrderItemUnitCostEstimator implements
     OutsourcingOrderItemUnitCostEstimator {
 
-    @Take
+    @ComponentAutowired
     ProcessService processService;
 
     @Override

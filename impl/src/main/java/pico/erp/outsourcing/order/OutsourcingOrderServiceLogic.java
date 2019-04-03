@@ -6,8 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kkojaeh.spring.boot.component.Give;
-import kkojaeh.spring.boot.component.Take;
+import kkojaeh.spring.boot.component.ComponentAutowired;
+import kkojaeh.spring.boot.component.ComponentBean;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ import pico.erp.warehouse.location.site.SiteService;
 
 @SuppressWarnings("Duplicates")
 @Service
-@Give
+@ComponentBean
 @Transactional
 @Validated
 public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
@@ -49,19 +49,19 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
   @Autowired
   private OutsourcingOrderMapper mapper;
 
-  @Take
+  @ComponentAutowired
   private OutsourcingRequestService outsourcingRequestService;
 
-  @Take
+  @ComponentAutowired
   private SiteService siteService;
 
-  @Take
+  @ComponentAutowired
   private DocumentService documentService;
 
-  @Take
+  @ComponentAutowired
   private DeliveryService deliveryService;
 
-  @Take
+  @ComponentAutowired
   private CompanyService companyService;
 
   @Override

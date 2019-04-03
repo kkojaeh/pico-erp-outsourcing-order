@@ -3,8 +3,8 @@ package pico.erp.outsourcing.order;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import kkojaeh.spring.boot.component.Give;
-import kkojaeh.spring.boot.component.Take;
+import kkojaeh.spring.boot.component.ComponentAutowired;
+import kkojaeh.spring.boot.component.ComponentBean;
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import pico.erp.document.DocumentService;
 import pico.erp.shared.data.ContentInputStream;
 import pico.erp.user.UserService;
 
-@Give
+@ComponentBean(host = false)
 @Component
 public class OutsourcingOrderDraftDeliverySubjectDefinition implements
   DeliverySubjectDefinition<OutsourcingOrderId, Object> {
@@ -29,16 +29,16 @@ public class OutsourcingOrderDraftDeliverySubjectDefinition implements
   @Getter
   String name = "[outsourcing-order] 외주 발주서";
 
-  @Take
+  @ComponentAutowired
   private CompanyService companyService;
 
   @Autowired
   private OutsourcingOrderService outsourcingOrderService;
 
-  @Take
+  @ComponentAutowired
   private UserService userService;
 
-  @Take
+  @ComponentAutowired
   private DocumentService documentService;
 
   @Override
