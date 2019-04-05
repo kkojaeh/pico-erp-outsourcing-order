@@ -2,7 +2,7 @@ package pico.erp.outsourcing.order;
 
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -13,6 +13,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Index;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,9 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pico.erp.company.CompanyId;
 import pico.erp.delivery.DeliveryId;
@@ -62,7 +62,7 @@ public class OutsourcingOrderEntity implements Serializable {
   })
   OutsourcingOrderCode code;
 
-  LocalDateTime dueDate;
+  OffsetDateTime dueDate;
 
   @AttributeOverrides({
     @AttributeOverride(name = "value", column = @Column(name = "RECEIVER_ID", length = TypeDefinitions.ID_LENGTH))
@@ -93,15 +93,15 @@ public class OutsourcingOrderEntity implements Serializable {
   })
   UserId chargerId;
 
-  LocalDateTime determinedDate;
+  OffsetDateTime determinedDate;
 
-  LocalDateTime receivedDate;
+  OffsetDateTime receivedDate;
 
-  LocalDateTime sentDate;
+  OffsetDateTime sentDate;
 
-  LocalDateTime rejectedDate;
+  OffsetDateTime rejectedDate;
 
-  LocalDateTime canceledDate;
+  OffsetDateTime canceledDate;
 
   @Column(length = TypeDefinitions.ENUM_LENGTH)
   @Enumerated(EnumType.STRING)
@@ -115,9 +115,8 @@ public class OutsourcingOrderEntity implements Serializable {
   @CreatedBy
   Auditor createdBy;
 
-  @CreatedDate
   @Column(updatable = false)
-  LocalDateTime createdDate;
+  OffsetDateTime createdDate;
 
   @Embedded
   @AttributeOverrides({
@@ -127,8 +126,7 @@ public class OutsourcingOrderEntity implements Serializable {
   @LastModifiedBy
   Auditor lastModifiedBy;
 
-  @LastModifiedDate
-  LocalDateTime lastModifiedDate;
+  OffsetDateTime lastModifiedDate;
 
   @AttributeOverrides({
     @AttributeOverride(name = "value", column = @Column(name = "DRAFT_ID", length = TypeDefinitions.UUID_BINARY_LENGTH))
@@ -139,5 +137,16 @@ public class OutsourcingOrderEntity implements Serializable {
     @AttributeOverride(name = "value", column = @Column(name = "DELIVERY_ID", length = TypeDefinitions.UUID_BINARY_LENGTH))
   })
   DeliveryId deliveryId;
+
+  @PrePersist
+  private void onCreate() {
+    createdDate = OffsetDateTime.now();
+    lastModifiedDate = OffsetDateTime.now();
+  }
+
+  @PreUpdate
+  private void onUpdate() {
+    lastModifiedDate = OffsetDateTime.now();
+  }
 
 }

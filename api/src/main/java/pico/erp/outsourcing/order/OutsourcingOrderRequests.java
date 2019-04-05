@@ -1,6 +1,6 @@
 package pico.erp.outsourcing.order;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Future;
@@ -30,7 +30,7 @@ public interface OutsourcingOrderRequests {
 
     @Future
     @NotNull
-    LocalDateTime dueDate;
+    OffsetDateTime dueDate;
 
     @Valid
     @NotNull
@@ -64,7 +64,7 @@ public interface OutsourcingOrderRequests {
 
     @Future
     @NotNull
-    LocalDateTime dueDate;
+    OffsetDateTime dueDate;
 
     @Valid
     @NotNull

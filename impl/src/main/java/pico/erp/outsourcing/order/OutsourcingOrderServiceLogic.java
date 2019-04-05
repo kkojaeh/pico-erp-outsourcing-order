@@ -1,7 +1,7 @@
 package pico.erp.outsourcing.order;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Optional;
@@ -159,7 +159,7 @@ public class OutsourcingOrderServiceLogic implements OutsourcingOrderService {
     val dueDate = purchaseRequests.stream()
       .map(purchaseRequest -> purchaseRequest.getDueDate())
       .min(Comparator.comparing(d -> d))
-      .orElseGet(() -> LocalDateTime.now().plusDays(1));
+      .orElseGet(() -> OffsetDateTime.now().plusDays(1));
     val supplierId = purchaseRequests.stream().findAny().get().getSupplierId();
     val collectedRemark = purchaseRequests.stream()
       .map(purchaseRequest -> Optional.ofNullable(purchaseRequest.getRemark()).orElse(""))

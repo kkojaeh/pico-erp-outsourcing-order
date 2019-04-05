@@ -1,7 +1,7 @@
 package pico.erp.outsourcing.order;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import javax.persistence.Id;
 import lombok.AccessLevel;
@@ -36,7 +36,7 @@ public class OutsourcingOrder implements Serializable {
 
   OutsourcingOrderCode code;
 
-  LocalDateTime dueDate;
+  OffsetDateTime dueDate;
 
   CompanyId supplierId;
 
@@ -48,15 +48,15 @@ public class OutsourcingOrder implements Serializable {
 
   UserId chargerId;
 
-  LocalDateTime determinedDate;
+  OffsetDateTime determinedDate;
 
-  LocalDateTime receivedDate;
+  OffsetDateTime receivedDate;
 
-  LocalDateTime sentDate;
+  OffsetDateTime sentDate;
 
-  LocalDateTime rejectedDate;
+  OffsetDateTime rejectedDate;
 
-  LocalDateTime canceledDate;
+  OffsetDateTime canceledDate;
 
   OutsourcingOrderStatusKind status;
 
@@ -110,7 +110,7 @@ public class OutsourcingOrder implements Serializable {
     this.draftId = request.getDraftId();
     this.deliveryId = request.getDeliveryId();
     this.status = OutsourcingOrderStatusKind.DETERMINED;
-    this.determinedDate = LocalDateTime.now();
+    this.determinedDate = OffsetDateTime.now();
     return new OutsourcingOrderMessages.Determine.Response(
       Arrays.asList(new DeterminedEvent(this.id))
     );
@@ -122,7 +122,7 @@ public class OutsourcingOrder implements Serializable {
       throw new OutsourcingOrderExceptions.CannotCancelException();
     }
     this.status = OutsourcingOrderStatusKind.CANCELED;
-    this.canceledDate = LocalDateTime.now();
+    this.canceledDate = OffsetDateTime.now();
     return new OutsourcingOrderMessages.Cancel.Response(
       Arrays.asList(new OutsourcingOrderEvents.CanceledEvent(this.id))
     );
@@ -134,7 +134,7 @@ public class OutsourcingOrder implements Serializable {
       throw new OutsourcingOrderExceptions.CannotReceiveException();
     }
     this.status = OutsourcingOrderStatusKind.RECEIVED;
-    this.receivedDate = LocalDateTime.now();
+    this.receivedDate = OffsetDateTime.now();
     return new OutsourcingOrderMessages.Receive.Response(
       Arrays.asList(new OutsourcingOrderEvents.ReceivedEvent(this.id))
     );
@@ -146,7 +146,7 @@ public class OutsourcingOrder implements Serializable {
       throw new OutsourcingOrderExceptions.CannotSendException();
     }
     this.status = OutsourcingOrderStatusKind.SENT;
-    this.sentDate = LocalDateTime.now();
+    this.sentDate = OffsetDateTime.now();
     return new OutsourcingOrderMessages.Send.Response(
       Arrays.asList(new OutsourcingOrderEvents.SentEvent(this.id))
     );
@@ -158,7 +158,7 @@ public class OutsourcingOrder implements Serializable {
       throw new OutsourcingOrderExceptions.CannotRejectException();
     }
     this.status = OutsourcingOrderStatusKind.REJECTED;
-    this.rejectedDate = LocalDateTime.now();
+    this.rejectedDate = OffsetDateTime.now();
     this.rejectedReason = request.getRejectedReason();
     return new OutsourcingOrderMessages.Reject.Response(
       Arrays.asList(new OutsourcingOrderEvents.RejectedEvent(this.id))

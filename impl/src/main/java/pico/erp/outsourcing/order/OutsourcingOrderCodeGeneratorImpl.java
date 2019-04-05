@@ -1,7 +1,7 @@
 package pico.erp.outsourcing.order;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAdjusters;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class OutsourcingOrderCodeGeneratorImpl implements OutsourcingOrderCodeGe
 
   @Override
   public OutsourcingOrderCode generate(OutsourcingOrder outsourcingOrder) {
-    val now = LocalDateTime.now();
+    val now = OffsetDateTime.now();
     val begin = now.with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
     val end = now.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
     val count = outsourcingOrderRepository.countCreatedBetween(begin, end);

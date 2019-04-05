@@ -1,6 +1,6 @@
 package pico.erp.outsourcing.order;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,17 +27,17 @@ public class OutsourcingOrderView {
 
   Address receiveAddress;
 
-  LocalDateTime dueDate;
+  OffsetDateTime dueDate;
 
-  LocalDateTime determinedDate;
+  OffsetDateTime determinedDate;
 
-  LocalDateTime receivedDate;
+  OffsetDateTime receivedDate;
 
-  LocalDateTime sentDate;
+  OffsetDateTime sentDate;
 
-  LocalDateTime rejectedDate;
+  OffsetDateTime rejectedDate;
 
-  LocalDateTime canceledDate;
+  OffsetDateTime canceledDate;
 
   OutsourcingOrderStatusKind status;
 
@@ -61,9 +61,9 @@ public class OutsourcingOrderView {
 
     Set<OutsourcingOrderStatusKind> statuses;
 
-    LocalDateTime startDueDate;
+    OffsetDateTime startDueDate;
 
-    LocalDateTime endDueDate;
+    OffsetDateTime endDueDate;
 
   }
 
